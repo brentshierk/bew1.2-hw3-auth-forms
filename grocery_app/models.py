@@ -1,5 +1,4 @@
 from sqlalchemy_utils import URLType
-
 from grocery_app import db
 from grocery_app.utils import FormEnum
 
@@ -27,5 +26,38 @@ class GroceryItem(db.Model):
     category = db.Column(db.Enum(ItemCategory), default=ItemCategory.OTHER)
     photo_url = db.Column(URLType)
     store_id = db.Column(
-        db.Integer, db.ForeignKey('grocery_store.id'), nullable=False)
+    db.Integer, db.ForeignKey('grocery_store.id'), nullable=False)
     store = db.relationship('GroceryStore', back_populates='items')
+
+    created_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    created_by = db.relationship('User')
+    user_items = db.relationship('User', secondary = 'shopping_list', back_populates = 'shopping_list_items')
+
+class User(db.Model):
+    """User model."""
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), nullable=False)
+    password = db.Column(db.String(200), nullable=False)
+    shopping_list_items = db.relationship('GroceryItem', secondary = 'shopping_list', back_populates = 'user_items')
+
+    # Flask-Login integration
+    def is_authenticated(self):
+        return True
+
+    def is_active(self): 
+        return True
+
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        return self.id
+
+   
+    def __unicode__(self):
+        return self.username
+
+shopping_list_table = db.Table('shopping_list',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('item_id', db.Integer, db.ForeignKey('grocery_item.id'))
+)

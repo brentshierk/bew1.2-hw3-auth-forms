@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Log In</h1>
+
+<form action="/login" method="POST">
+    {{ form.csrf_token }}
+    <fieldset>
+        <legend>Enter your credentials</legend>
+
+        {{ form.username.label }}
+        {{ form.username }}
+    
+        {% for error in form.username.errors %}
+            <span class="error">*{{ error }}</span>
+        {% endfor %}
+        
+        {{ form.password.label }}
+        {{ form.password }}
+    
+        {% for error in form.password.errors %}
+            <span class="error">*{{ error }}</span>
+        {% endfor %}
+        
+
+        {{ form.submit }}
+    </fieldset>
+</form>
+
+{% endblock %}
