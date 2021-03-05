@@ -20,17 +20,25 @@
 
 <h2>Edit Store</h2>
 
-<form>
+<form method="POST" action="/store/{{store.id}}">
     <fieldset>
         <legend>Please enter your information:</legend>
+        {{ form.csrf_token }}
+        <!-- Uses the `form` object passed in form the route to render a form. -->
+        {% for error in form.title.errors %}
+            <span class="error">*{{ error }}</span>
+        {% endfor %}
+        {{ form.title.label }}
+        {{ form.title }}
 
+        {% for error in form.address.errors %}
+            <span class="error">*{{ error }}</span>
+        {% endfor %}
+        {{ form.address.label }}
+        {{ form.address }}
 
+        {{ form.submit }}
 
-        <!-- TODO: Remove the next paragraph and use the `form` object passed in 
-            from the route to render a form. -->
-        <p><em>Form fields go here!</em></p>
-
-        <input type="submit" value="Submit">
     </fieldset>
 </form>
 

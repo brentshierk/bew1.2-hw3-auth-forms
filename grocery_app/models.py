@@ -17,18 +17,22 @@ class GroceryStore(db.Model):
     title = db.Column(db.String(80), nullable=False)
     address = db.Column(db.String(200), nullable=False)
     items = db.relationship('GroceryItem', back_populates='store')
+     
+    # who Created it
+    created_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    created_by = db.relationship('User')
 
 class GroceryItem(db.Model):
     """Grocery Item model."""
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     price = db.Column(db.Float(precision=2), nullable=False)
-    category = db.Column(db.Enum(ItemCategory), default=ItemCategory.OTHER)
+    category = db.Column(db.String(80), default=ItemCategory.OTHER)
     photo_url = db.Column(URLType)
-    store_id = db.Column(
-    db.Integer, db.ForeignKey('grocery_store.id'), nullable=False)
+    store_id = db.Column(db.Integer, db.ForeignKey('grocery_store.id'), nullable=False)
     store = db.relationship('GroceryStore', back_populates='items')
 
+    # who Created it
     created_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     created_by = db.relationship('User')
     user_items = db.relationship('User', secondary = 'shopping_list', back_populates = 'shopping_list_items')
@@ -44,7 +48,7 @@ class User(db.Model):
     def is_authenticated(self):
         return True
 
-    def is_active(self): 
+    def is_active(self): # line 37
         return True
 
     def is_anonymous(self):
@@ -53,7 +57,7 @@ class User(db.Model):
     def get_id(self):
         return self.id
 
-   
+    # Required for administrative interface
     def __unicode__(self):
         return self.username
 
